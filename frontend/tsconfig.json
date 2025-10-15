@@ -1,9 +1,26 @@
 {
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
-    "types": [
-      "vitest/globals"
-    ]
-  }
+    "paths": {
+      "~/*": ["./*"],
+      "~~/*": ["./*"],
+      "#app/*": [".nuxt/*"],
+      "#imports": [".nuxt/imports.d.ts"],
+      "#build/*": [".nuxt/*"]
+    }
+  },
+  "include": [
+    "./src",
+    "./stores",
+    ".nuxt",
+    "nuxt.config.ts"
+  ]
 }
