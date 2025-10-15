@@ -1,8 +1,9 @@
+// purpose: Configure Nuxt modules, runtime settings, and global styling for the SPA
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   srcDir: 'src/',
-  modules: ['@pinia/nuxt'],
+  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'],
   devtools: { enabled: true },
   typescript: {
     strict: true,
@@ -14,7 +15,7 @@ export default defineNuxtConfig({
       appName: process.env.NUXT_PUBLIC_APP_NAME || 'Task Manager'
     }
   },
-  css: ['@/assets/styles/main.scss'],
+  css: ['@/assets/styles/main.css'],
   app: {
     head: {
       titleTemplate: '%s · Task Manager',
