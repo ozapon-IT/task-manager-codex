@@ -1,0 +1,41 @@
+# General
+.DS_Store
+.env
+.env.*
+node_modules/
+vendor/
+coverage/
+storage/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Laravel
+bootstrap/cache/
+public/storage
+storage/*.key
+/storage/framework/*
+/storage/logs/*
+
+# Nuxt
+.nuxt/
+.output/
+.cache/
+
+# Docker
+*.pid
+docker-data/
+
+# PHPUnit
+.phpunit.result.cache
+
+# Cypress
+cypress/screenshots/
+cypress/videos/
+
+# Misc
+.idea/
+.vscode/
