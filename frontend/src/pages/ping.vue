@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 const runtimeConfig = useRuntimeConfig()
-const endpoint = `${runtimeConfig.public.apiBase}/ping`
+const endpoint = `${runtimeConfig.public.apiBaseUrl}/ping`
 
 const data = ref<{ pong: boolean } | null>(null)
 const pending = ref(true)
