@@ -1,0 +1,18 @@
+<?php
+
+// purpose: seed projects with associated tasks for development and testing
+
+namespace Database\Seeders;
+
+use App\Models\Project;
+use Illuminate\Database\Seeder;
+
+class ProjectSeeder extends Seeder
+{
+    public function run(): void
+    {
+        Project::factory()
+            ->count(5)
+            ->create();
+    }
+}
