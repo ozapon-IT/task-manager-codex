@@ -1,45 +1,42 @@
+<!-- purpose: Dashboard landing page welcoming users and surfacing quick actions -->
 <template>
-  <main class="landing">
-    <section class="hero">
-      <h1>{{ appName }}</h1>
-      <p>Kick-start the Task Manager SPA by scaffolding layout, stores, and components.</p>
-    </section>
-    <section class="next-steps">
-      <h2>Next Steps</h2>
-      <ol>
-        <li>Implement authentication screens and project dashboard.</li>
-        <li>Wire Pinia stores to the Laravel API.</li>
-        <li>Add Vitest component suites and Cypress end-to-end coverage.</li>
-      </ol>
-    </section>
-  </main>
+  <section class="space-y-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-lg">
+    <header class="space-y-2">
+      <p class="text-sm uppercase tracking-widest text-slate-400">Dashboard</p>
+      <h2 class="text-3xl font-bold text-slate-50">Welcome to {{ appName }}</h2>
+      <p class="text-sm text-slate-400">
+        Track projects, prioritise tasks, and keep upcoming deadlines in view. Start by exploring your
+        project backlog or creating a new workspace segment.
+      </p>
+    </header>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <NuxtLink
+        to="/projects"
+        class="group flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/70 px-5 py-4 transition hover:border-sky-500/50 hover:bg-slate-900"
+      >
+        <div>
+          <h3 class="text-lg font-semibold text-slate-100 group-hover:text-sky-200">View Projects</h3>
+          <p class="text-sm text-slate-400">Browse all active workstreams and their task load.</p>
+        </div>
+        <span class="text-sky-400">→</span>
+      </NuxtLink>
+
+      <NuxtLink
+        to="/projects/new"
+        class="flex items-center justify-between rounded-xl border border-dashed border-slate-700 bg-slate-950/40 px-5 py-4 text-slate-300 transition hover:border-sky-500/60 hover:text-sky-200"
+      >
+        <div>
+          <h3 class="text-lg font-semibold">Create Project</h3>
+          <p class="text-sm">Set milestones, assign owners, and sync due dates.</p>
+        </div>
+        <span class="text-slate-500">+</span>
+      </NuxtLink>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
-const appName = computed(() => config.public.appName)
+const appName = computed(() => config.public.appName ?? 'Task Manager')
 </script>
-
-<style scoped>
-.landing {
-  display: grid;
-  gap: 2rem;
-  padding: 4rem 2rem;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.hero h1 {
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
-  margin: 0;
-}
-
-.next-steps ol {
-  margin: 0;
-  padding-left: 1.25rem;
-}
-
-.next-steps li + li {
-  margin-top: 0.5rem;
-}
-</style>
