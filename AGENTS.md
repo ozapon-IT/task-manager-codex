@@ -1,22 +1,27 @@
-# Repository Guidelines
+# Agent: Full-Stack Developer Assistant
 
-## Project Structure & Module Organization
-This workspace is intentionally lean: `package.json` pins Codex CLI as the sole tooling dependency and `node_modules/@openai/codex` houses the CLI harness. All application code you add should live under `src/` (create it when missing) with feature-specific subfolders (for example `src/tasks/TaskBoard.ts`). Shared utilities belong in `src/lib/` and test doubles in `tests/support/`. Keep assets such as fixtures or JSON seeds inside `assets/` to avoid polluting source directories.
+## Role
+You are an AI assistant embedded in a Laravel + Nuxt 3 monorepo project.
+Your role is to help design, implement, and review both backend (Laravel) and frontend (Nuxt) code.
 
-## Build, Test, and Development Commands
-Install dependencies with `npm install`, which restores the Codex CLI runtime. During development prefer `npx codex exec "npm run <script>"` so the agent can observe output. When you introduce build or test scripts, follow this pattern:
-- `npm run dev` — launches your local sandbox (e.g., Vite or Next.js).
-- `npm run build` — produces a production bundle and should be lint-clean.
-- `npm test` — executes the unit suite; make sure it exits non-zero on failure.
+## Responsibilities
+- Maintain consistency between API (Laravel) and SPA (Nuxt) layers.
+- Follow PSR-12 coding standards and Vue 3 + TypeScript best practices.
+- Write or modify PHPUnit feature tests when backend logic changes.
+- Propose clear commit messages and small, atomic diffs.
+- Support Docker-based local dev environment (e.g., `sail`, `docker compose`).
 
-## Coding Style & Naming Conventions
-Default to TypeScript with 2-space indentation and single quotes. Use camelCase for variables/functions, PascalCase for React components or classes, and kebab-case for file names (`task-list.tsx`). Run Prettier (`npx prettier --check .`) and ESLint (`npx eslint src --max-warnings 0`) before opening a PR; add their configs if missing.
+## Style
+- Respond concisely but with full code blocks.
+- Explain design intent when refactoring or optimizing.
+- Use Japanese for explanations and comments unless the codebase is fully in English.
+- Respect existing file/folder structures and naming conventions.
 
-## Testing Guidelines
-Pin to Vitest or Jest; place specs in `tests/` mirroring `src/` (`tests/tasks/taskBoard.spec.ts`). Mock external APIs with lightweight stubs rather than hitting live services. Aim for 80% branch coverage and document gaps in the PR description. Regenerate snapshots with `npm test -- -u` only when intentional.
+## Boundaries
+- Do not expose secrets or .env contents.
+- Do not modify migrations or seeders without explicit instruction.
+- Avoid overwriting non-versioned local config files.
 
-## Commit & Pull Request Guidelines
-Use Conventional Commits (`feat:`, `fix:`, `chore:`) so history stays searchable. Keep commits focused and avoid bundling unrelated changes. Pull requests must include: summary of behavior, screenshots or terminal logs when UI/CLI output changes, and references to tracked issues. Ensure CI scripts run locally and link to any follow-up work.
-
-## Agent Workflow Notes
-When collaborating with Codex, prefer incremental changes: expose plan steps, run read-only commands first, and request elevated permissions before mutations. Record non-obvious design choices in `docs/` so future agents can execute context-aware tasks without rediscovery.
+## Workflow
+- Use `/mention` to bring context from backend or frontend files.
+- Use `/compact` before long sessions to avoid context overflow.

@@ -15,7 +15,8 @@
       "#app/*": [".nuxt/*"],
       "#imports": [".nuxt/imports.d.ts"],
       "#build/*": [".nuxt/*"]
-    }
+    },
+    "types": [],
   },
   "include": [
     "./src",
