@@ -1,34 +1,94 @@
-# Task Manager Specification
+# Task Manager 仕様概要
 
-## Vision
-A portfolio-grade Task Manager that highlights API-driven architecture and modern SPA ergonomics. The solution emphasises strong authentication, clean project/task management, and readiness for future collaboration features.
+## システム全体像
+- Nuxt 3 SPA と Laravel 12 API を分離したレイヤーで構築し、Docker Compose（backend / frontend / mysql / nginx）が開発環境を提供します。
+- `nginx` コンテナが `http://localhost:8080` を公開し、`/api` へのリクエストを php-fpm（backend）にルーティングします。Nuxt の開発サーバーは `http://localhost:3000` でホットリロード付きの SPA を提供します。
+- MySQL 8.0 はプロジェクトとタスクの永続化を担い、ボリューム `mysql_data` にデータを保存します。
 
-## Core Domains
-- **Project**: title, description, due date, status (`draft`, `active`, `completed`, `archived`).
-- **Task**: content, assignee, deadline, priority, status (`todo`, `in_progress`, `blocked`, `done`).
-- **Relationships**: projects own many tasks; tasks belong to a single project and reference a user as assignee.
+| サービス | ポート | 役割 |
+| --- | --- | --- |
+| backend (php-fpm) | 内部 9000 | Laravel 12 API 実行環境 |
+| frontend (Nuxt dev) | 3000 | Nuxt 3 開発サーバー（Vite ベース） |
+| nginx | 8080 | ルーティング／静的配信／API プロキシ |
+| mysql | 3306 | MySQL 8.0 データベース |
 
-## Technology Stack
-- **Backend**: Laravel 11 API with Sanctum for SPA token auth.
-- **Frontend**: Nuxt 3 + TypeScript + Pinia SPA, VeeValidate for form handling, dark-mode native styling.
-- **Infrastructure**: Docker Compose orchestrating php-fpm, nginx, MySQL 8, and the Nuxt dev server.
-- **Testing**: PHPUnit or Pest for APIs, Vitest for unit/component tests, Cypress for end-to-end validation.
-- **CI/CD**: GitHub Actions pipelines targeting Render (or similar) for automated deployment.
+## 技術スタック
+| レイヤー | 技術 | バージョン / 備考 |
+| --- | --- | --- |
+| フレームワーク (Backend) | Laravel | 12.x |
+| 言語 (Backend) | PHP | 8.3（php:8.3-fpm） |
+| フレームワーク (Frontend) | Nuxt | 3.11.x（Vue 3 + Vite） |
+| 言語 (Frontend) | TypeScript | 5.4.x |
+| スタイリング | Tailwind CSS | 3.4.x、ライト／ダークモード両対応 |
+| 状態管理 | Pinia | 2.1.x |
+| フォーム検証 | Vee Validate | 4.12.x |
+| HTTP クライアント | Axios | 1.6.x |
+| データベース | MySQL | 8.0 |
+| テスト | PHPUnit 11、Vitest 3、Cypress 13 |
 
-## Non-functional Targets
-- Lighthouse score ≥ 90 across Performance, Accessibility, Best Practices, SEO.
-- OWASP Top 10 considerations: input sanitisation, authentication hardening, rate limiting, secure headers.
-- Developer experience: hot reload, containerised tooling, typed contracts, observable test coverage.
+## 機能仕様
+- **ダッシュボード**
+  - プロジェクトの進行中件数、当日タスク数、直近 3 日以内のタスク数を KPI カードで表示。
+  - 優先度と期日でソートした高優先タスクリストを表示し、ステータス更新・編集・削除をワンクリックで実行。
+  - ダーク／ライトモードをヘッダー右上のトグルで切り替え。
+- **プロジェクト管理**
+  - プロジェクト一覧・作成フォーム・削除操作を 1 画面に集約。
+  - プロジェクトにはタイトル、説明、期日、ステータス（`draft` / `active` / `completed` / `archived`）を設定可能。
+  - プロジェクト詳細画面ではメタ情報の更新とタスクテーブルを表示。
+- **タスク管理**
+  - タスクはプロジェクトにネストされたリソースとして CRUD 操作（作成・編集・削除・完了／再オープン）を提供。
+  - ステータス（`todo` / `in_progress` / `blocked` / `done`）と優先度（`low` / `medium` / `high` / `critical`）をモーダルで編集。
+  - クイック完了ボタンでステータスを `done` ⇔ `todo` に即時切り替え。
+  - 期日、説明、優先度の表示を含むテーブルビューを備え、API と同期したデータを Pinia ストアで管理。
 
-## Future Enhancements
-- Interactive Gantt charts for project planning.
-- Comment threads with mentions and rich text.
-- Project sharing and RBAC-driven access control.
-- Real-time notifications and activity feeds.
+## API 仕様（REST）
+| メソッド | パス | 概要 |
+| --- | --- | --- |
+| GET | `/api/ping` | ヘルスチェック（`{"pong": true}` を返却） |
+| GET | `/api/projects` | プロジェクト一覧（タスクを含むページネーション付き JSON） |
+| POST | `/api/projects` | プロジェクト作成 |
+| GET | `/api/projects/{project}` | プロジェクト詳細（関連タスクを含む） |
+| PUT | `/api/projects/{project}` | プロジェクト更新 |
+| DELETE | `/api/projects/{project}` | プロジェクト削除（関連タスクを含めてソフトデリート） |
+| GET | `/api/projects/{project}/tasks` | プロジェクトに紐づくタスク一覧 |
+| POST | `/api/projects/{project}/tasks` | タスク作成 |
+| GET | `/api/projects/{project}/tasks/{task}` | タスク詳細 |
+| PUT | `/api/projects/{project}/tasks/{task}` | タスク更新 |
+| DELETE | `/api/projects/{project}/tasks/{task}` | タスク削除 |
 
-## Implementation Milestones
-1. Stand up migrations, seed data, and RESTful routes for Projects/Tasks.
-2. Implement Sanctum-authenticated session flow between Nuxt and Laravel.
-3. Build Pinia stores and UI flows for CRUD, filtering, and prioritisation.
-4. Layer validation (VeeValidate hooks), telemetry, and automated test suites.
-5. Optimise and harden for deployment (GitHub Actions, Render infrastructure, security review).
+- レスポンス形式はすべて JSON。リクエストボディは `application/json`。
+- バリデーションは Laravel のフォームリクエスト（`$request->validate()`）で実施し、エラー時は 422 を返却。
+- 削除処理はプロジェクト／タスクともにソフトデリートを採用し、関連タスクは削除イベントで連鎖的に削除されます。
+
+## データモデル
+### Project
+| カラム | 型 / 備考 |
+| --- | --- |
+| `id` | bigint, 主キー |
+| `title` | string(255), 必須 |
+| `description` | text, nullable |
+| `due_date` | date, nullable |
+| `status` | enum（`draft` / `active` / `completed` / `archived`） |
+| `created_at` / `updated_at` | timestamp |
+| `deleted_at` | timestamp, SoftDeletes |
+
+### Task
+| カラム | 型 / 備考 |
+| --- | --- |
+| `id` | bigint, 主キー |
+| `project_id` | foreignId → projects.id（`cascadeOnDelete`） |
+| `title` | string(255), 必須 |
+| `description` | text, nullable |
+| `due_date` | date, nullable |
+| `status` | enum（`todo` / `in_progress` / `blocked` / `done`） |
+| `priority` | string（`low` / `medium` / `high` / `critical`） |
+| `created_at` / `updated_at` | timestamp |
+| `deleted_at` | timestamp, SoftDeletes |
+
+- シーダーはダミーのプロジェクト 5 件と各プロジェクトに 3〜5 件のタスクを作成します。
+
+## 運用・開発フロー
+- `docker compose up -d` で全コンテナを起動し、`docker compose exec backend php artisan migrate --seed` でデータベースを初期化します。
+- フロントエンドは `frontend` コンテナ内の `npm run dev` でホットリロードが有効になり、`npm run dev` をホストで実行することでスタンドアロン開発も可能です。
+- テストは `php artisan test`（バックエンド）、`npm run test:unit` / `npm run test:e2e`（フロントエンド）で実施します。
+- テーマ設定は `localStorage` に保存され、初回アクセス時はシステムの配色設定に追従します。
