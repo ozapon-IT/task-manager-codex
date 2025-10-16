@@ -1,66 +1,64 @@
 <!-- purpose: Render project list with creation form and CRUD actions wired to Pinia store -->
 <template>
-  <section class="space-y-8">
-    <header
-      class="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-lg sm:flex-row sm:items-center sm:justify-between"
-    >
+  <section class="space-y-6">
+    <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p class="text-xs uppercase tracking-widest text-slate-400">Projects</p>
-        <h1 class="text-3xl font-semibold text-slate-50">Project Portfolio</h1>
-        <p class="text-sm text-slate-400">
-          Manage client workstreams, track delivery deadlines, and dive into task progress.
+        <p class="text-xs uppercase tracking-widest text-lightText dark:text-slate-400">Projects</p>
+        <h1 class="text-3xl font-semibold text-lightHeading dark:text-slate-50">Project portfolio</h1>
+        <p class="text-sm text-lightText dark:text-slate-400">
+          Create, track, and deliver initiatives with clarity.
         </p>
       </div>
       <button
         type="button"
-        class="inline-flex items-center justify-center rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-sky-400"
+        class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-500 dark:bg-sky-500 dark:hover:bg-sky-400/80"
         @click="toggleCreateForm"
       >
-        <span class="mr-2 text-lg">+</span>
-        New Project
+        <span class="text-lg">+</span>
+        New project
       </button>
     </header>
 
     <div
       v-if="showCreate"
-      class="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 shadow-inner"
+      class="rounded-2xl border border-lightBorder bg-lightCard p-6 shadow-md transition-colors dark:border-slate-800 dark:bg-slate-900/75 dark:shadow-inner"
     >
-      <h2 class="text-lg font-semibold text-slate-100">Create Project</h2>
-      <p class="text-sm text-slate-400">Fill in the basics and start planning immediately.</p>
+      <h2 class="text-lg font-semibold text-lightHeading dark:text-slate-100">Create Project</h2>
+      <p class="text-sm text-lightText dark:text-slate-400">Fill in the basics and start planning immediately.</p>
       <form class="mt-4 grid gap-4 md:grid-cols-2" @submit.prevent="submitCreate">
         <label class="flex flex-col gap-2 md:col-span-1">
-          <span class="text-sm text-slate-300">Title</span>
+          <span class="text-sm text-lightText dark:text-slate-300">Title</span>
           <input
             v-model="form.title"
             type="text"
             required
-            class="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-sky-500 focus:outline-none"
+            class="rounded-md border border-lightBorder bg-lightCard px-3 py-2 text-sm text-lightHeading transition focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-500"
           />
         </label>
 
         <label class="flex flex-col gap-2 md:col-span-1">
-          <span class="text-sm text-slate-300">Due date</span>
+          <span class="text-sm text-lightText dark:text-slate-300">Due date</span>
           <input
             v-model="form.due_date"
             type="date"
-            class="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-sky-500 focus:outline-none"
+            class="rounded-md border border-lightBorder bg-lightCard px-3 py-2 text-sm text-lightHeading transition focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-500"
           />
         </label>
 
         <label class="flex flex-col gap-2 md:col-span-2">
-          <span class="text-sm text-slate-300">Description</span>
+          <span class="text-sm text-lightText dark:text-slate-300">Description</span>
           <textarea
             v-model="form.description"
             rows="3"
-            class="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-sky-500 focus:outline-none"
+            class="rounded-md border border-lightBorder bg-lightCard px-3 py-2 text-sm text-lightHeading transition focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-500"
           />
         </label>
 
         <label class="flex flex-col gap-2 md:col-span-1">
-          <span class="text-sm text-slate-300">Status</span>
+          <span class="text-sm text-lightText dark:text-slate-300">Status</span>
           <select
             v-model="form.status"
-            class="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-sky-500 focus:outline-none"
+            class="rounded-md border border-lightBorder bg-lightCard px-3 py-2 text-sm text-lightHeading transition focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-sky-500"
           >
             <option v-for="status in statusOptions" :key="status" :value="status">
               {{ statusLabels[status] }}
@@ -71,7 +69,7 @@
         <div class="flex items-center gap-3 md:col-span-2">
           <button
             type="submit"
-            class="inline-flex items-center rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-400"
+            class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 dark:bg-sky-500 dark:hover:bg-sky-400/80"
             :disabled="loading"
           >
             <span v-if="loading" class="mr-2 animate-spin">⏳</span>
@@ -79,7 +77,7 @@
           </button>
           <button
             type="button"
-            class="text-sm text-slate-400 hover:text-slate-200"
+            class="text-sm text-lightText transition hover:text-lightHeading dark:text-slate-400 dark:hover:text-slate-200"
             @click="closeCreateForm"
           >
             Cancel
@@ -88,26 +86,26 @@
       </form>
     </div>
 
-    <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow">
+    <div class="rounded-2xl border border-lightBorder bg-lightCard p-6 shadow-md transition-colors dark:border-slate-800 dark:bg-slate-900/70 dark:shadow-xl">
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-slate-100">All Projects</h2>
-        <div class="text-sm text-slate-400">
+        <h2 class="text-lg font-semibold text-lightHeading dark:text-slate-100">All Projects</h2>
+        <div class="text-sm text-lightText dark:text-slate-400">
           <span v-if="loading">Loading projects…</span>
           <span v-else>{{ projects.length }} projects</span>
         </div>
       </div>
 
-      <div v-if="error" class="mb-4 rounded-md border border-red-500 bg-red-500/10 p-3 text-sm text-red-300">
+      <div v-if="error" class="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-500 dark:bg-red-500/10 dark:text-red-300">
         {{ error }}
       </div>
 
-      <div v-if="!loading && projects.length === 0" class="text-sm text-slate-400">
+      <div v-if="!loading && projects.length === 0" class="rounded-md border border-dashed border-lightBorder bg-lightBg p-4 text-sm text-lightText dark:border-slate-700 dark:bg-slate-950/40 dark:text-slate-400">
         No projects yet. Create one to get started!
       </div>
 
       <div v-else class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-800 text-left text-sm">
-          <thead class="bg-slate-900/80 text-slate-300">
+        <table class="min-w-full divide-y divide-lightBorder bg-lightCard text-left text-sm dark:divide-slate-800 dark:bg-transparent">
+          <thead class="bg-lightBg text-lightText dark:bg-slate-900/80 dark:text-slate-300">
             <tr>
               <th class="px-4 py-3 font-medium">Title</th>
               <th class="px-4 py-3 font-medium">Status</th>
@@ -116,30 +114,30 @@
               <th class="px-4 py-3 text-right font-medium">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-800 text-slate-200">
-            <tr v-for="project in projects" :key="project.id" class="hover:bg-slate-900/60">
+          <tbody class="divide-y divide-lightBorder text-lightText dark:divide-slate-800 dark:text-slate-200">
+            <tr v-for="project in projects" :key="project.id" class="hover:bg-blue-50/60 dark:hover:bg-slate-900/60">
               <td class="px-4 py-3">
                 <NuxtLink
                   :to="`/projects/${project.id}`"
-                  class="font-semibold text-sky-300 hover:text-sky-200"
+                  class="font-semibold text-blue-600 transition hover:text-blue-700 dark:text-sky-300 dark:hover:text-sky-200"
                 >
                   {{ project.title }}
                 </NuxtLink>
-                <p v-if="project.description" class="text-xs text-slate-400">
+                <p v-if="project.description" class="text-xs text-lightText dark:text-slate-400">
                   {{ project.description }}
                 </p>
               </td>
-              <td class="px-4 py-3 capitalize">{{ statusLabels[project.status] }}</td>
+              <td class="px-4 py-3 capitalize text-lightText dark:text-slate-200">{{ statusLabels[project.status] }}</td>
               <td class="px-4 py-3">
                 <span v-if="project.due_date">{{ formatDate(project.due_date) }}</span>
-                <span v-else class="text-xs text-slate-500">—</span>
+                <span v-else class="text-xs text-lightText/70 dark:text-slate-500">—</span>
               </td>
               <td class="px-4 py-3">
                 {{ project.tasks?.length ?? '—' }}
               </td>
               <td class="px-4 py-3 text-right">
                 <button
-                  class="rounded-md border border-slate-700 px-3 py-1 text-xs font-medium text-slate-300 transition hover:border-red-500 hover:text-red-400"
+                  class="rounded-md border border-lightBorder px-3 py-1 text-xs font-medium text-lightText transition hover:border-red-300 hover:text-red-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-red-500 dark:hover:text-red-400"
                   :disabled="loading"
                   @click="removeProject(project.id)"
                 >

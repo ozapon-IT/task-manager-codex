@@ -13,6 +13,7 @@
     "test:e2e": "cypress run"
   },
   "dependencies": {
+    "@heroicons/vue": "^2.2.0",
     "@pinia/nuxt": "^0.5.1",
     "@vee-validate/rules": "^4.12.5",
     "axios": "^1.6.8",

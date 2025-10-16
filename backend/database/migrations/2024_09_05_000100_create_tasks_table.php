@@ -21,12 +21,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        Schema::table('tasks', function (Blueprint $table) {
-            $table->foreign('project_id')
-                ->references('id')->on('projects')
-                ->onDelete('cascade');
-        });
     }
 
     public function down(): void
